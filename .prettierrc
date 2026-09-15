@@ -1,0 +1,27 @@
+{
+    "semi": true,
+    "tabWidth": 4,
+    "useTabs": true,
+    "printWidth": 140,
+    "endOfLine": "auto",
+    "singleQuote": false,
+    "trailingComma": "all",
+    "bracketSpacing": true,
+    "arrowParens": "always",
+    "htmlWhitespaceSensitivity": "strict",
+    "overrides": [
+        {
+            "files": "*.html",
+            "options": {
+                "printWidth": 1000
+            }
+        },
+        {
+            "files": ["*.js", "*.jsx"],
+            "options": {
+                "useTabs": false,
+                "tabWidth": 4
+            }
+        }
+    ]
+}

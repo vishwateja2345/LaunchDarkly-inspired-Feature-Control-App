@@ -1,0 +1,19 @@
+{
+	"name": "flagdeck",
+	"version": "1.0.0",
+	"private": true,
+	"description": "FlagDeck - Feature Flag Management Platform - React and Spring Boot",
+	"workspaces": [
+		"frontend"
+	],
+	"scripts": {
+		"prestart": "bash setup.sh --start",
+		"start": "concurrently \"bun run dev:backend\" \"bun run dev:frontend\"",
+		"dev:frontend": "cd frontend && bun run dev",
+		"dev:backend": "cd backend && ./gradlew bootRun --quiet --console=plain",
+		"seed": "cd backend && ./gradlew seed --quiet --console=plain"
+	},
+	"devDependencies": {
+		"concurrently": "9.2.1"
+	}
+}

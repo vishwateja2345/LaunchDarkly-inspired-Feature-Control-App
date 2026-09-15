@@ -1,0 +1,38 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.1'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.featureflags'
+version = '1.0.0'
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	implementation 'at.favre.lib:bcrypt:0.10.2'
+	implementation 'com.auth0:java-jwt:4.4.0'
+}
+
+springBoot {
+	mainClass = 'com.featureflags.FeatureFlagsApplication'
+}
+
+tasks.withType(JavaExec).configureEach {
+	jvmArgs '--enable-native-access=ALL-UNNAMED'
+}
+
+tasks.register('seed', JavaExec) {
+	group = 'application'
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'com.featureflags.seed.SeedRunner'
+}

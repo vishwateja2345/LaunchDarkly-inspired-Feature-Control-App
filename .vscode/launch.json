@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug FlagDeck Spring Boot Backend",
+            "type": "java",
+            "request": "launch",
+            "mainClass": "com.featureflags.FeatureFlagsApplication",
+            "projectName": "featureflags-backend",
+            "cwd": "${workspaceFolder}/backend",
+            "console": "integratedTerminal"
+        }
+    ]
+}

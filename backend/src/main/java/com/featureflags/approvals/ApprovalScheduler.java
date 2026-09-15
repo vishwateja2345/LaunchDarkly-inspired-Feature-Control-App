@@ -2,6 +2,8 @@ package com.featureflags.approvals;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +15,8 @@ import com.featureflags.flags.FlagService;
 /** Applies scheduled flag changes once their scheduled time arrives. */
 @Component
 public class ApprovalScheduler {
+
+	private static final Logger log = LoggerFactory.getLogger(ApprovalScheduler.class);
 
 	private static final long POLL_INTERVAL_MS = 30_000;
 
@@ -39,7 +43,7 @@ public class ApprovalScheduler {
 				Environment environment = environmentService.requireEnvironment(request.getEnvironmentId());
 				approvalService.applyScheduled(request, flag, environment);
 			} catch (RuntimeException exception) {
-				System.err.println("Failed to apply scheduled change " + request.getId() + ": " + exception);
+				log.error("Failed to apply scheduled change {}", request.getId(), exception);
 			}
 		}
 	}

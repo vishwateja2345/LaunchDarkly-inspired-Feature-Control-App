@@ -53,6 +53,9 @@ public class ApprovalRequest {
 
 	private String reason = "";
 
+	/** The history action label to apply once this request is approved (e.g. "CONFIG_UPDATED", "ROLLED_BACK"). */
+	private String changeAction = "CONFIG_UPDATED";
+
 	private String status = STATUS_PENDING;
 
 	@Field(targetType = FieldType.OBJECT_ID)
@@ -85,6 +88,7 @@ public class ApprovalRequest {
 		body.put("requestedByName", requestedByName);
 		body.put("proposedChange", proposedChange);
 		body.put("reason", reason);
+		body.put("changeAction", changeAction);
 		body.put("status", status);
 		body.put("reviewerId", reviewerId);
 		body.put("reviewerName", reviewerName);
@@ -183,6 +187,14 @@ public class ApprovalRequest {
 
 	public void setReason(String reason) {
 		this.reason = reason;
+	}
+
+	public String getChangeAction() {
+		return changeAction;
+	}
+
+	public void setChangeAction(String changeAction) {
+		this.changeAction = changeAction == null ? "CONFIG_UPDATED" : changeAction;
 	}
 
 	public String getStatus() {

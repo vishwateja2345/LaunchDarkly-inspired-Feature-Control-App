@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { SelectMenu } from "../../shared/components/SelectMenu.jsx";
 
 const BAR_COLORS = ["#6366f1", "#38bdf8", "#f59e0b", "#f472b6", "#4ade80", "#a78bfa", "#fb923c"];
@@ -18,6 +19,17 @@ function evenSplit(variations) {
  */
 export function OutcomeEditor({ onChange, outcome, variations }) {
     const mode = outcome.rollout && outcome.rollout.length > 0 ? "rollout" : "variation";
+    const variationIsValid = variations.some((variation) => variation.id === outcome.variationId);
+
+    // The variation dropdown visually falls back to the first option when nothing is
+    // selected yet, so without this the underlying value could stay null/stale while the
+    // UI looks fully filled in - self-heal immediately so what's shown always matches state.
+    useEffect(() => {
+        if (mode === "variation" && !variationIsValid && variations[0]) {
+            onChange({ variationId: variations[0].id, rollout: [] });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [mode, variationIsValid, variations[0]?.id]);
 
     const setMode = (nextMode) => {
         if (nextMode === "rollout") {

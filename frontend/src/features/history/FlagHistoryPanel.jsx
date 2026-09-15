@@ -85,8 +85,9 @@ function formatDateTime(value) {
     return value ? new Date(value).toLocaleString() : "Unknown time";
 }
 
-export function FlagHistoryPanel({ flagId, environmentKey, onRestored }) {
+export function FlagHistoryPanel({ flagId, environment, onRestored }) {
     const { show } = useToast();
+    const environmentKey = environment?.key;
     const [entries, setEntries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -130,10 +131,16 @@ export function FlagHistoryPanel({ flagId, environmentKey, onRestored }) {
         setRestoreBusy(true);
         setRestoreError("");
         try {
-            await flagsApi.restoreConfig(flagId, environmentKey, restoreTarget._id);
-            show(`Restored ${environmentKey} configuration from ${formatDateTime(restoreTarget.createdAt)}.`, {
-                tone: "success",
-            });
+            const result = await flagsApi.restoreConfig(flagId, environmentKey, restoreTarget._id);
+            if (result.applied) {
+                show(`Restored ${environmentKey} configuration from ${formatDateTime(restoreTarget.createdAt)}.`, {
+                    tone: "success",
+                });
+            } else {
+                show(`Submitted for approval - ${environment.name} requires review before this rollback goes live.`, {
+                    tone: "info",
+                });
+            }
             setRestoreTarget(null);
             await load();
             onRestored?.();
@@ -246,9 +253,13 @@ export function FlagHistoryPanel({ flagId, environmentKey, onRestored }) {
             {restoreTarget && (
                 <ConfirmationDialog
                     busy={restoreBusy}
-                    confirmLabel="Restore version"
+                    confirmLabel={environment?.production ? "Submit for approval" : "Restore version"}
                     error={restoreError}
-                    message={`This will replace the current ${environmentKey} configuration with the one from ${formatDateTime(restoreTarget.createdAt)}.`}
+                    message={
+                        environment?.production
+                            ? `This will submit the ${formatDateTime(restoreTarget.createdAt)} configuration for approval. It won't take effect in ${environmentKey} until a teammate reviews it.`
+                            : `This will replace the current ${environmentKey} configuration with the one from ${formatDateTime(restoreTarget.createdAt)}.`
+                    }
                     title={`Restore ${environmentKey} configuration?`}
                     onCancel={closeRestoreDialog}
                     onConfirm={confirmRestore}

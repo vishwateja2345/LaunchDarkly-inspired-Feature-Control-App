@@ -48,7 +48,7 @@ public class ApprovalService {
 
 	/** Validates the proposed change up front so a request can never be created unapprovable. */
 	public ApprovalRequest propose(FeatureFlag flag, Environment environment, Map<String, Object> rawChange,
-			String reason, Account requester) {
+			String reason, String changeAction, Account requester) {
 		FlagConfigValidator.validate(flag, rawChange);
 
 		ApprovalRequest request = new ApprovalRequest();
@@ -62,6 +62,7 @@ public class ApprovalService {
 		request.setRequestedByName(requester.getName());
 		request.setProposedChange(new LinkedHashMap<>(rawChange));
 		request.setReason(reason == null ? "" : reason);
+		request.setChangeAction(changeAction);
 		request.setStatus(ApprovalRequest.STATUS_PENDING);
 
 		ApprovalRequest saved = approvalRepository.save(request);
@@ -159,8 +160,10 @@ public class ApprovalService {
 			Account reviewer) {
 		FlagConfigValidator.ParsedChange change = FlagConfigValidator.validate(flag, request.getProposedChange());
 		String actorName = reviewer == null ? "Scheduled approval" : reviewer.getName();
-		flagConfigService.applyDirect(flag, environment, change, reviewer, "CONFIG_UPDATED",
-				actorName + " applied the approved change (requested by " + request.getRequestedByName() + ").");
+		String changeNoun = "ROLLED_BACK".equals(request.getChangeAction()) ? "rollback" : "change";
+		flagConfigService.applyDirect(flag, environment, change, reviewer, request.getChangeAction(),
+				actorName + " applied the approved " + changeNoun + " (requested by " + request.getRequestedByName()
+						+ ").");
 	}
 
 	private void ensureNotSelfReview(ApprovalRequest request, Account reviewer) {

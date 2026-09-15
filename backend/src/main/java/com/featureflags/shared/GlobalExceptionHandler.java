@@ -3,6 +3,8 @@ package com.featureflags.shared;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,6 +16,8 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+	private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
 	private static final int INTERNAL_STATUS = 500;
 
@@ -38,8 +42,8 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<Map<String, Object>> handleUnexpected(Exception exception) {
-		System.err.println("Unhandled error: " + exception);
+	public ResponseEntity<Map<String, Object>> handleUnexpected(HttpServletRequest request, Exception exception) {
+		log.error("Unhandled error on {} {}", request.getMethod(), request.getRequestURI(), exception);
 
 		return ResponseEntity.status(INTERNAL_STATUS).body(envelope(INTERNAL_CODE, INTERNAL_MESSAGE, null));
 	}

@@ -105,7 +105,7 @@ export function FlagDetailPage({ flagKey }) {
             )}
             {tab === "experiment" && <ExperimentPanel flag={flag} environmentKey={environment.key} />}
             {tab === "history" && (
-                <FlagHistoryPanel flagId={flag._id} environmentKey={environment.key} onRestored={load} />
+                <FlagHistoryPanel flagId={flag._id} environment={environment} onRestored={load} />
             )}
         </div>
     );

@@ -109,7 +109,7 @@ export function DashboardPage() {
 
             <div className="dashboard-grid">
                 <section className="card">
-                    <h3 style={{ marginTop: 0 }}>Recent activity</h3>
+                    <h3>Recent activity</h3>
                     {recent.length === 0 && <p style={{ color: "var(--muted)", fontSize: 13.5 }}>No changes recorded yet.</p>}
                     <div className="timeline">
                         {recent.map((entry) => (
@@ -134,7 +134,7 @@ export function DashboardPage() {
                 </section>
 
                 <section className="card">
-                    <h3 style={{ marginTop: 0 }}>Awaiting your review</h3>
+                    <h3>Awaiting your review</h3>
                     {stats.pendingRequests.length === 0 && (
                         <p style={{ color: "var(--muted)", fontSize: 13.5 }}>Nothing pending - production changes appear here.</p>
                     )}

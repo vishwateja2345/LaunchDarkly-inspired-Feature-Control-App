@@ -615,7 +615,7 @@ function SegmentFormDialog({ mode, projectId, segment, onClose, onSaved }) {
                         onChange={(event) => setName(event.target.value)}
                     />
                     {fieldErrors.name && (
-                        <div className="field-error" role="alert" style={{ margin: 0 }}>
+                        <div className="field-error" role="alert">
                             {fieldErrors.name}
                         </div>
                     )}
@@ -634,7 +634,7 @@ function SegmentFormDialog({ mode, projectId, segment, onClose, onSaved }) {
                         Leave blank on create to let the server generate a key from the name.
                     </div>
                     {fieldErrors.key && (
-                        <div className="field-error" role="alert" style={{ margin: 0 }}>
+                        <div className="field-error" role="alert">
                             {fieldErrors.key}
                         </div>
                     )}
@@ -650,7 +650,7 @@ function SegmentFormDialog({ mode, projectId, segment, onClose, onSaved }) {
                         onChange={(event) => setDescription(event.target.value)}
                     />
                     {fieldErrors.description && (
-                        <div className="field-error" role="alert" style={{ margin: 0 }}>
+                        <div className="field-error" role="alert">
                             {fieldErrors.description}
                         </div>
                     )}
@@ -676,7 +676,7 @@ function SegmentFormDialog({ mode, projectId, segment, onClose, onSaved }) {
                         ))}
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-                        <div className="field-hint" style={{ margin: 0 }}>
+                        <div className="field-hint">
                             Rules are AND-ed together. Values accept comma-separated entries.
                         </div>
                         <button
@@ -706,7 +706,7 @@ function SegmentFormDialog({ mode, projectId, segment, onClose, onSaved }) {
                     />
                     <div className="field-hint">Comma or whitespace separated user keys to always include.</div>
                     {fieldErrors.includedKeys && (
-                        <div className="field-error" role="alert" style={{ margin: 0 }}>
+                        <div className="field-error" role="alert">
                             {fieldErrors.includedKeys}
                         </div>
                     )}
@@ -723,7 +723,7 @@ function SegmentFormDialog({ mode, projectId, segment, onClose, onSaved }) {
                     />
                     <div className="field-hint">Comma or whitespace separated user keys to always exclude.</div>
                     {fieldErrors.excludedKeys && (
-                        <div className="field-error" role="alert" style={{ margin: 0 }}>
+                        <div className="field-error" role="alert">
                             {fieldErrors.excludedKeys}
                         </div>
                     )}
@@ -874,7 +874,7 @@ function UserFormDialog({ mode, projectId, user, onClose, onSaved }) {
                             onChange={(event) => setKeyValue(event.target.value)}
                         />
                         {fieldErrors.key && (
-                            <div className="field-error" role="alert" style={{ margin: 0 }}>
+                            <div className="field-error" role="alert">
                                 {fieldErrors.key}
                             </div>
                         )}
@@ -890,7 +890,7 @@ function UserFormDialog({ mode, projectId, user, onClose, onSaved }) {
                             onChange={(event) => setName(event.target.value)}
                         />
                         {fieldErrors.name && (
-                            <div className="field-error" role="alert" style={{ margin: 0 }}>
+                            <div className="field-error" role="alert">
                                 {fieldErrors.name}
                             </div>
                         )}
@@ -908,7 +908,7 @@ function UserFormDialog({ mode, projectId, user, onClose, onSaved }) {
                             onChange={(event) => setEmail(event.target.value)}
                         />
                         {fieldErrors.email && (
-                            <div className="field-error" role="alert" style={{ margin: 0 }}>
+                            <div className="field-error" role="alert">
                                 {fieldErrors.email}
                             </div>
                         )}
@@ -923,7 +923,7 @@ function UserFormDialog({ mode, projectId, user, onClose, onSaved }) {
                             onChange={(event) => setPlan(event.target.value)}
                         />
                         {fieldErrors.plan && (
-                            <div className="field-error" role="alert" style={{ margin: 0 }}>
+                            <div className="field-error" role="alert">
                                 {fieldErrors.plan}
                             </div>
                         )}
@@ -940,7 +940,7 @@ function UserFormDialog({ mode, projectId, user, onClose, onSaved }) {
                         onChange={(event) => setCountry(event.target.value)}
                     />
                     {fieldErrors.country && (
-                        <div className="field-error" role="alert" style={{ margin: 0 }}>
+                        <div className="field-error" role="alert">
                             {fieldErrors.country}
                         </div>
                     )}
@@ -1000,7 +1000,7 @@ function UserFormDialog({ mode, projectId, user, onClose, onSaved }) {
                         ))}
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-                        <div className="field-hint" style={{ margin: 0 }}>
+                        <div className="field-hint">
                             Boolean strings and numeric strings are converted automatically.
                         </div>
                         <button

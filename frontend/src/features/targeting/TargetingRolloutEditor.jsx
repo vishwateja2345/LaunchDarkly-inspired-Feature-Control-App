@@ -17,12 +17,12 @@ function targetsToRows(targets, variations) {
     return rows;
 }
 
-function newRule() {
+function newRule(variations) {
     return {
         id: `rule-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
         description: "",
         clauses: [{ attribute: "", operator: "in", values: [] }],
-        variationId: null,
+        variationId: variations[0]?.id ?? null,
         rollout: [],
     };
 }
@@ -166,8 +166,8 @@ export function TargetingRolloutEditor({ config, environment, flag, projectId, o
             </div>
 
             <div className="card">
-                <h3 style={{ marginTop: 0 }}>Individual targeting</h3>
-                <p style={{ color: "var(--muted)", fontSize: 13, marginTop: -6 }}>
+                <h3>Individual targeting</h3>
+                <p className="card-subtitle">
                     Always serve a specific variation to named users, regardless of rules below.
                 </p>
                 {flag.variations.map((variation) => (
@@ -187,11 +187,11 @@ export function TargetingRolloutEditor({ config, environment, flag, projectId, o
 
             <div className="card">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <h3 style={{ margin: 0 }}>Targeting rules</h3>
+                    <h3>Targeting rules</h3>
                     <button
                         className="link-button"
                         type="button"
-                        onClick={() => setRulesDirty((current) => [...current, newRule()])}
+                        onClick={() => setRulesDirty((current) => [...current, newRule(flag.variations)])}
                     >
                         + Add rule
                     </button>
@@ -213,8 +213,8 @@ export function TargetingRolloutEditor({ config, environment, flag, projectId, o
             </div>
 
             <div className="card">
-                <h3 style={{ marginTop: 0 }}>Default rule (fallthrough)</h3>
-                <p style={{ color: "var(--muted)", fontSize: 13, marginTop: -6 }}>
+                <h3>Default rule (fallthrough)</h3>
+                <p className="card-subtitle">
                     Applies when no individual target or rule above matches.
                 </p>
                 <OutcomeEditor outcome={fallthrough} variations={flag.variations} onChange={setFallthroughDirty} />

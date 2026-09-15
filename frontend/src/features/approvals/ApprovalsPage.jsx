@@ -27,50 +27,6 @@ const STATUS_TONES = {
     cancelled: "neutral",
 };
 
-const fieldStyle = {
-    display: "grid",
-    gap: 6,
-    marginBottom: 14,
-};
-
-const labelStyle = {
-    fontSize: 13,
-    fontWeight: 600,
-};
-
-const inputStyle = {
-    width: "100%",
-    border: "1px solid var(--border-strong)",
-    borderRadius: 8,
-    padding: "10px 12px",
-    background: "var(--field)",
-    color: "var(--ink)",
-    font: "inherit",
-    boxSizing: "border-box",
-};
-
-const helperStyle = {
-    margin: 0,
-    color: "var(--muted)",
-    fontSize: 12.5,
-};
-
-const detailListStyle = {
-    margin: "8px 0 0",
-    paddingLeft: 18,
-    color: "var(--muted)",
-    fontSize: 13.5,
-};
-
-const detailItemStyle = {
-    marginBottom: 4,
-};
-
-const sectionTitleStyle = {
-    margin: "12px 0 0",
-    fontSize: 13.5,
-};
-
 function formatDateTime(value) {
     if (!value) return "";
     const date = new Date(value);
@@ -140,13 +96,13 @@ function ApprovalCard({ request, isOwnRequest, onApprove, onReject, onCancel }) 
         <article className="approval-card">
             <header className="approval-card-header">
                 <div>
-                    <h3 style={{ margin: 0, fontSize: 18 }}>{request.flagName}</h3>
+                    <h3 className="approval-card-title">{request.flagName}</h3>
                     <div className="approval-card-meta">
                         <span>Requested by {request.requestedByName || "Unknown teammate"}</span>
                         <span>{formatDateTime(request.createdAt)}</span>
                     </div>
                 </div>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+                <div className="flex-row" style={{ justifyContent: "flex-end" }}>
                     <Badge tone={isProductionEnvironment(request) ? "danger" : "neutral"}>{request.environmentName}</Badge>
                     <Badge tone={STATUS_TONES[request.status] || "neutral"}>{formatStatus(request.status)}</Badge>
                 </div>
@@ -155,27 +111,27 @@ function ApprovalCard({ request, isOwnRequest, onApprove, onReject, onCancel }) 
             {request.reason && <div className="approval-card-reason">{request.reason}</div>}
 
             <div>
-                <p style={sectionTitleStyle}><strong>Proposed change</strong></p>
-                <ul style={detailListStyle}>
+                <p className="section-title"><strong>Proposed change</strong></p>
+                <ul className="approval-detail-list">
                     {summarizeProposedChange(request.proposedChange).map((line) => (
-                        <li key={line} style={detailItemStyle}>{line}</li>
+                        <li key={line}>{line}</li>
                     ))}
                 </ul>
             </div>
 
             {request.status === "scheduled" && request.scheduledFor && (
-                <p style={{ margin: "12px 0 0", fontSize: 13.5 }}>
+                <p className="helper-text-tight" style={{ marginTop: 12 }}>
                     <strong>Scheduled to apply on:</strong> {formatDateTime(request.scheduledFor)}
                 </p>
             )}
 
             {request.reviewerName && (
-                <div style={{ marginTop: 12 }}>
-                    <p style={{ margin: 0, fontSize: 13.5 }}>
+                <div className="approval-review-note">
+                    <p className="no-margin">
                         <strong>Reviewed by {request.reviewerName}</strong>
                         {request.reviewedAt ? ` on ${formatDateTime(request.reviewedAt)}` : ""}
                     </p>
-                    {request.reviewComment && <p style={{ margin: "6px 0 0", color: "var(--muted)", fontSize: 13.5 }}>{request.reviewComment}</p>}
+                    {request.reviewComment && <p className="helper-text">{request.reviewComment}</p>}
                 </div>
             )}
 
@@ -244,34 +200,32 @@ function ApproveDialog({ request, onClose, onSubmit }) {
         <Modal labelledBy={titleId} onClose={() => !busy && onClose()}>
             <form className="form-dialog" onSubmit={submit}>
                 <h2 id={titleId}>Approve {request.flagName}</h2>
-                <p style={{ margin: "0 0 18px", color: "var(--muted)", fontSize: 13.5 }}>
+                <p className="helper-text-tight" style={{ marginBottom: 18 }}>
                     Approve this production change now, or choose a future time to schedule it.
                 </p>
 
-                <div style={fieldStyle}>
-                    <label htmlFor={commentId} style={labelStyle}>Comment (optional)</label>
+                <div className="field-group">
+                    <label htmlFor={commentId}>Comment (optional)</label>
                     <textarea
                         data-autofocus
                         disabled={busy}
                         id={commentId}
                         rows={4}
-                        style={{ ...inputStyle, resize: "vertical" }}
                         value={comment}
                         onChange={(event) => setComment(event.target.value)}
                     />
                 </div>
 
-                <div style={fieldStyle}>
-                    <label htmlFor={scheduleId} style={labelStyle}>Schedule for (optional)</label>
+                <div className="field-group">
+                    <label htmlFor={scheduleId}>Schedule for (optional)</label>
                     <input
                         disabled={busy}
                         id={scheduleId}
-                        style={inputStyle}
                         type="datetime-local"
                         value={scheduleFor}
                         onChange={(event) => setScheduleFor(event.target.value)}
                     />
-                    <p style={helperStyle}>Leave this blank to apply the change immediately.</p>
+                    <p className="field-hint">Leave this blank to apply the change immediately.</p>
                 </div>
 
                 {error && <p className="inline-error" role="alert">{error}</p>}
@@ -319,19 +273,18 @@ function RejectDialog({ request, onClose, onSubmit }) {
         <Modal labelledBy={titleId} onClose={() => !busy && onClose()}>
             <form className="form-dialog" onSubmit={submit}>
                 <h2 id={titleId}>Reject {request.flagName}</h2>
-                <p style={{ margin: "0 0 18px", color: "var(--muted)", fontSize: 13.5 }}>
+                <p className="helper-text-tight" style={{ marginBottom: 18 }}>
                     Share why this production change should not move forward.
                 </p>
 
-                <div style={fieldStyle}>
-                    <label htmlFor={commentId} style={labelStyle}>Reason</label>
+                <div className="field-group">
+                    <label htmlFor={commentId}>Reason</label>
                     <textarea
                         data-autofocus
                         disabled={busy}
                         id={commentId}
                         required
                         rows={4}
-                        style={{ ...inputStyle, resize: "vertical" }}
                         value={comment}
                         onChange={(event) => setComment(event.target.value)}
                     />

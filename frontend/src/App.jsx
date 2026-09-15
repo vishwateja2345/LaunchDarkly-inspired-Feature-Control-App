@@ -192,10 +192,8 @@ function Shell() {
                                     }
                                     style={{ "--environment-color": candidateEnvironment.color }}
                                     onClick={() => selectEnvironment(candidateEnvironment.key)}
+                                    title={candidateEnvironment.production ? "Production changes require approval" : undefined}
                                 >
-                                    {candidateEnvironment.production && (
-                                        <MaterialIcon size={14}>warning_amber</MaterialIcon>
-                                    )}
                                     {candidateEnvironment.name}
                                 </button>
                             ))}

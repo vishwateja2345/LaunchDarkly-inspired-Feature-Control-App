@@ -39,6 +39,18 @@ code { background: var(--field); padding: 1px 6px; border-radius: 4px; font-size
 ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 6px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; white-space: nowrap; }
 
+/* ---------------------------------- Utilities ---------------------------------- */
+.text-muted { color: var(--muted); }
+.text-faint { color: var(--faint); }
+.helper-text { margin: 6px 0 0; color: var(--muted); font-size: 13.5px; }
+.helper-text-tight { margin: 0; color: var(--muted); font-size: 13.5px; }
+.meta-text { margin: 0; color: var(--muted); font-size: 12.5px; }
+.section-title { margin: 0 0 10px; font-size: 13.5px; }
+.no-margin { margin: 0; }
+.flex-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.flex-row-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.flex-col { display: flex; flex-direction: column; gap: 10px; }
+
 /* ---------------------------------- Boot / loading ---------------------------------- */
 .app-boot { display: grid; position: fixed; z-index: 1000; inset: 0; place-content: center; gap: 20px; background: var(--surface-muted); color: var(--ink-strong); text-align: center; }
 .app-boot-brand { display: flex; align-items: center; gap: 12px; font-size: 24px; letter-spacing: -.3px; color: var(--accent); }
@@ -119,6 +131,10 @@ code { background: var(--field); padding: 1px 6px; border-radius: 4px; font-size
 .field-group input, .field-group select, .field-group textarea {
     padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--field); color: var(--ink);
 }
+.field-group textarea { resize: vertical; }
+/* .field-hint/.field-error default to negative margins tuned for .outlined-input (see above);
+   inside .field-group's flex gap layout that same negative margin overlaps the field, so reset it here. */
+.field-group .field-hint, .field-group .field-error { margin: 0; }
 .field-row { display: flex; gap: 12px; flex-wrap: wrap; }
 .field-row > * { flex: 1 1 160px; }
 .checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 14px; }
@@ -179,6 +195,8 @@ button.link-button:hover { text-decoration: underline; }
 .search-input input:focus { outline: none; }
 
 .card { background: var(--surface-raised); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+.card h3 { margin: 0 0 4px; font-size: 15px; }
+.card-subtitle { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
 .card + .card { margin-top: 14px; }
 .card-list { display: flex; flex-direction: column; gap: 12px; }
 
@@ -243,6 +261,10 @@ button.link-button:hover { text-decoration: underline; }
 .approval-card-reason { font-size: 13.5px; color: var(--ink); background: var(--surface-muted); border-radius: 8px; padding: 10px 12px; margin: 10px 0; }
 .approval-card-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
 .self-request-note { font-size: 12.5px; color: var(--faint); font-style: italic; }
+.approval-card-title { margin: 0; font-size: 18px; }
+.approval-detail-list { margin: 8px 0 0; padding-left: 18px; color: var(--muted); font-size: 13.5px; }
+.approval-detail-list li { margin-bottom: 4px; }
+.approval-review-note { margin: 12px 0 0; padding-top: 12px; border-top: 1px dashed var(--divider); font-size: 13.5px; }
 
 /* ---------------------------------- History timeline ---------------------------------- */
 .timeline { display: flex; flex-direction: column; }

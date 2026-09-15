@@ -61,10 +61,10 @@ export function EvaluatorPanel({ flag, projectId, environmentKey }) {
 
     return (
         <div className="card">
-            <h3 style={{ marginTop: 0 }}>
+            <h3>
                 <MaterialIcon size={18}>bolt</MaterialIcon> Try it
             </h3>
-            <p style={{ color: "var(--muted)", fontSize: 13, marginTop: -6 }}>
+            <p className="card-subtitle">
                 Simulate an SDK evaluation for a user without leaving this page.
             </p>
             <form onSubmit={submit}>

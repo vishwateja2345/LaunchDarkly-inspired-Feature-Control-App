@@ -402,7 +402,7 @@ function EnvironmentFormDialog({ busy, environment, error, fieldErrors = {}, mod
                         onChange={(event) => setName(event.target.value)}
                     />
                     {nameError && (
-                        <p className="field-error" role="alert" style={{ margin: 0 }}>
+                        <p className="field-error" role="alert">
                             {nameError}
                         </p>
                     )}
@@ -424,12 +424,12 @@ function EnvironmentFormDialog({ busy, environment, error, fieldErrors = {}, mod
                                 value={key}
                                 onChange={(event) => setKey(event.target.value.toLowerCase())}
                             />
-                            <p className="field-hint" style={{ margin: 0 }}>
+                            <p className="field-hint">
                                 Leave blank to generate a key from the name. Use lowercase letters,
                                 numbers, and hyphens only when setting one manually.
                             </p>
                             {keyError && (
-                                <p className="field-error" role="alert" style={{ margin: 0 }}>
+                                <p className="field-error" role="alert">
                                     {keyError}
                                 </p>
                             )}
@@ -520,12 +520,12 @@ function EnvironmentFormDialog({ busy, environment, error, fieldErrors = {}, mod
                             onChange={(event) => setColor(event.target.value)}
                         />
                     </div>
-                    <p className="field-hint" style={{ margin: 0 }}>
+                    <p className="field-hint">
                         Choose a recognizable swatch for the environment selector and management
                         views.
                     </p>
                     {colorError && (
-                        <p className="field-error" role="alert" style={{ margin: 0 }}>
+                        <p className="field-error" role="alert">
                             {colorError}
                         </p>
                     )}

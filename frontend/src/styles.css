@@ -74,18 +74,28 @@ code { background: var(--field); padding: 1px 6px; border-radius: 4px; font-size
 
 /* ---------------------------------- Login ---------------------------------- */
 .login-page { min-height: 100vh; display: grid; place-items: center; background: radial-gradient(circle at top, var(--accent-wash), var(--surface) 60%); padding: 24px; }
-.login-card { width: 100%; max-width: 380px; background: var(--surface-raised); border: 1px solid var(--border); border-radius: 16px; padding: 36px 32px; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+.login-card { width: 100%; max-width: 420px; background: var(--surface-raised); border: 1px solid var(--border); border-radius: 16px; padding: 36px 32px; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
 .login-mark { width: 52px; height: 52px; border-radius: 14px; background: var(--accent-strong); color: #fff; display: grid; place-items: center; margin-bottom: 16px; }
 .login-card h1 { font-size: 22px; margin: 0 0 4px; }
 .login-subtitle { color: var(--muted); margin: 0 0 24px; font-size: 14px; }
 .login-error { color: var(--danger); font-size: 13px; margin: 4px 0 0; }
 .login-actions { margin-top: 20px; }
 .login-actions .primary-button { width: 100%; }
-.login-demo-hint { margin-top: 24px; border-top: 1px solid var(--divider); padding-top: 14px; font-size: 13px; color: var(--muted); }
-.login-demo-hint summary { cursor: pointer; color: var(--accent); font-weight: 500; }
-.login-demo-hint ul { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
-.login-demo-hint button { color: var(--accent); font-size: 12.5px; padding: 2px 0; }
-.login-demo-hint button:hover { text-decoration: underline; }
+.login-demo-section { margin-top: 26px; border-top: 1px solid var(--divider); padding-top: 18px; }
+.login-demo-divider { display: block; text-align: center; font-size: 12px; color: var(--faint); text-transform: uppercase; letter-spacing: .04em; font-weight: 600; margin-bottom: 12px; }
+.login-demo-list { display: flex; flex-direction: column; gap: 8px; }
+.login-demo-account {
+    display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--field); text-align: left;
+}
+.login-demo-account:hover:not(:disabled) { border-color: var(--accent); background: var(--hover); }
+.login-demo-account:disabled { opacity: .6; }
+.login-demo-account-info { display: flex; flex-direction: column; flex: 1; min-width: 0; line-height: 1.3; }
+.login-demo-account-info strong { font-size: 13.5px; }
+.login-demo-account-info span { font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.login-demo-account .material-icon { color: var(--faint); flex: 0 0 auto; }
+.login-demo-spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--field-active); border-top-color: var(--accent); animation: spin .7s linear infinite; flex: 0 0 auto; }
+.login-demo-note { margin: 14px 0 0; font-size: 12px; color: var(--faint); text-align: center; }
 
 /* ---------------------------------- Form controls ---------------------------------- */
 .outlined-input { position: relative; margin-bottom: 18px; }

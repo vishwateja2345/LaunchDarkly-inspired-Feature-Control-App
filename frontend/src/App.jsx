@@ -9,6 +9,7 @@ import { Spinner } from "./shared/components/Spinner.jsx";
 import { applyTheme, readTheme } from "./shared/utils/theme.js";
 import { identityColor, identityInitials } from "./shared/utils/identity.js";
 import { LoginPage } from "./features/auth/LoginPage.jsx";
+import { DashboardPage } from "./features/dashboard/DashboardPage.jsx";
 import { FlagsListPage } from "./features/flags/FlagsListPage.jsx";
 import { FlagDetailPage } from "./features/flags/FlagDetailPage.jsx";
 import { EnvironmentsPage } from "./features/environments/EnvironmentsPage.jsx";
@@ -17,6 +18,7 @@ import { ApprovalsPage } from "./features/approvals/ApprovalsPage.jsx";
 import { ProjectHistoryPage } from "./features/history/ProjectHistoryPage.jsx";
 
 const NAV_ITEMS = [
+    { icon: "rocket", key: "dashboard", label: "Dashboard" },
     { icon: "flag", key: "flags", label: "Flags" },
     { icon: "layers", key: "environments", label: "Environments" },
     { icon: "group", key: "segments", label: "Targeting" },
@@ -75,7 +77,7 @@ function Shell() {
 
     useEffect(() => {
         if (path === "/" && project) {
-            navigate(`/p/${project.key}/flags`, { replace: true });
+            navigate(`/p/${project.key}/dashboard`, { replace: true });
         }
     }, [path, project, navigate]);
 
@@ -85,7 +87,7 @@ function Shell() {
                 return item.key;
             }
         }
-        return "flags";
+        return "dashboard";
     }, [path]);
 
     if (!projectsLoaded) {
@@ -127,7 +129,7 @@ function Shell() {
                         value={project?.key}
                         onChange={(key) => {
                             selectProject(key);
-                            navigate(`/p/${key}/flags`);
+                            navigate(`/p/${key}/dashboard`);
                         }}
                         options={projects.map((candidate) => ({ value: candidate.key, label: candidate.name }))}
                     />
@@ -209,6 +211,7 @@ function Shell() {
 }
 
 function PageRouter({ path, projectKey }) {
+    if (matchPath(`/p/${projectKey}/dashboard`, path)) return <DashboardPage />;
     if (matchPath(`/p/${projectKey}/flags`, path)) return <FlagsListPage />;
     const flagMatch = matchPath(`/p/${projectKey}/flags/:flagKey`, path);
     if (flagMatch) return <FlagDetailPage flagKey={flagMatch.flagKey} />;
@@ -216,5 +219,5 @@ function PageRouter({ path, projectKey }) {
     if (matchPath(`/p/${projectKey}/segments`, path)) return <SegmentsPage />;
     if (matchPath(`/p/${projectKey}/approvals`, path)) return <ApprovalsPage />;
     if (matchPath(`/p/${projectKey}/history`, path)) return <ProjectHistoryPage />;
-    return <FlagsListPage />;
+    return <DashboardPage />;
 }

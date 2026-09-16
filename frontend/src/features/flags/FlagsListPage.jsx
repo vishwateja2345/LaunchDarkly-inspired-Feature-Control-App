@@ -228,23 +228,22 @@ export function FlagsListPage() {
                                 <span className="flag-row-type">
                                     {flag.flagType === "boolean" ? "Boolean" : `${flag.variations.length} variations`}
                                 </span>
-                                <div onClick={(event) => event.stopPropagation()}>
-                                    {!flag.archived && config && environment ? (
+                                <div className="flag-row-actions" onClick={(event) => event.stopPropagation()}>
+                                    {!flag.archived && config && environment && (
                                         <Switch
                                             ariaLabel={`Toggle ${flag.name} in ${environment.name}`}
                                             checked={Boolean(config.enabled)}
                                             onChange={(next) => toggleFlag(flag, next)}
                                         />
-                                    ) : (
-                                        <button
-                                            className="icon-button"
-                                            type="button"
-                                            aria-label={flag.archived ? "Restore flag" : "Archive flag"}
-                                            onClick={() => setArchiveTarget(flag)}
-                                        >
-                                            <MaterialIcon size={18}>{flag.archived ? "history" : "delete"}</MaterialIcon>
-                                        </button>
                                     )}
+                                    <button
+                                        className="icon-button"
+                                        type="button"
+                                        aria-label={flag.archived ? "Restore flag" : "Archive flag"}
+                                        onClick={() => setArchiveTarget(flag)}
+                                    >
+                                        <MaterialIcon size={18}>{flag.archived ? "history" : "delete"}</MaterialIcon>
+                                    </button>
                                 </div>
                             </div>
                         );

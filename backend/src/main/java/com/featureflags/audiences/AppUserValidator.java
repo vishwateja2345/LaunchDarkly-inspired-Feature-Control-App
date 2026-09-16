@@ -29,8 +29,8 @@ public final class AppUserValidator {
 
 		errors.throwIfAny();
 
-		return new CreateInput(key, name, email == null ? "" : email.trim(), plan == null ? "free" : plan,
-				country == null ? "US" : country, attributes == null ? Map.of() : attributes);
+		return new CreateInput(key, name, email == null ? "" : email.trim(), blankToDefault(plan, "free"),
+				blankToDefault(country, "US"), attributes == null ? Map.of() : attributes);
 	}
 
 	public static Map<String, Object> validateUpdate(Map<String, Object> body) {
@@ -47,11 +47,11 @@ public final class AppUserValidator {
 		}
 
 		if (input.containsKey("plan")) {
-			updates.put("plan", Requests.string(input, "plan"));
+			updates.put("plan", blankToDefault(Requests.string(input, "plan"), "free"));
 		}
 
 		if (input.containsKey("country")) {
-			updates.put("country", Requests.string(input, "country"));
+			updates.put("country", blankToDefault(Requests.string(input, "country"), "US"));
 		}
 
 		if (input.containsKey("attributes")) {
@@ -66,6 +66,13 @@ public final class AppUserValidator {
 		errors.throwIfAny();
 
 		return updates;
+	}
+
+	/** A field left entirely blank on the form should fall back to the model's real default,
+	 * the same as never sending it at all - not be stored as a literal empty string that then
+	 * fails to match any "plan is X"/"country is X" targeting rule. */
+	private static String blankToDefault(String value, String fallback) {
+		return value == null || value.isBlank() ? fallback : value;
 	}
 
 	private static String readKey(Map<String, Object> input, FieldErrors errors) {

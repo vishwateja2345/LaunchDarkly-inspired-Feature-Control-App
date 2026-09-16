@@ -87,13 +87,25 @@ public class ExperimentService {
 			stats.put(variation.getId(), new VariationStats());
 		}
 
+		// Conversion events don't carry their own variationId (a real SDK reports "user X
+		// converted on metric Z" independently of exposure) - attribute each conversion back to
+		// the variation the same user was first exposed to, joining the two event streams by key.
+		Map<String, String> variationByUser = new LinkedHashMap<>();
+
 		for (ExperimentEvent event : exposures) {
 			stats.computeIfAbsent(event.getVariationId(), key -> new VariationStats()).exposedUsers
 					.add(event.getUserKey());
+			variationByUser.putIfAbsent(event.getUserKey(), event.getVariationId());
 		}
 
 		for (ExperimentEvent event : conversions) {
-			VariationStats variationStats = stats.computeIfAbsent(event.getVariationId(), key -> new VariationStats());
+			String variationId = variationByUser.get(event.getUserKey());
+
+			if (variationId == null) {
+				continue;
+			}
+
+			VariationStats variationStats = stats.computeIfAbsent(variationId, key -> new VariationStats());
 
 			if (variationStats.convertedUsers.add(event.getUserKey()) && event.getValue() != null) {
 				variationStats.totalValue += event.getValue();

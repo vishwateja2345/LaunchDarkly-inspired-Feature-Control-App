@@ -176,6 +176,30 @@ re-read in source).
    (`GlobalExceptionHandler`, `ApprovalScheduler`), losing the stack trace and bypassing normal
    log configuration entirely - meaning a real production 500 would have been nearly
    undebuggable. Switched both to SLF4J with the full exception logged.
+10. **Critical: experiment conversions were never counted - every metric always showed a flat
+    0% conversion rate.** Conversion events are recorded independently of exposure events
+    (`recordConversion` only ever sets `userKey`/`metricKey`/`value`, never `variationId` - a
+    real SDK reports "user X converted on metric Z" without re-specifying which variation they
+    saw), but the stats comparison looked up each conversion's bucket by
+    `event.getVariationId()` directly, which is always `null` for a conversion event, so every
+    recorded conversion silently landed in a throwaway bucket no variation's row ever read.
+    This made the entire Experimentation feature non-functional: however much traffic was
+    simulated or recorded, every variation's conversion count stayed at zero. Fixed by joining
+    the two event streams by `userKey` (build a user -> variation map from exposures, then
+    attribute each conversion through it) instead of relying on the conversion event's own
+    (always-null) `variationId`. Verified live, including that the fix works retroactively on
+    already-recorded events with no data migration needed: a manual exposure+conversion pair
+    correctly showed up in the right variation's row immediately, and pre-existing "stuck at
+    zero" simulated traffic from before the fix became correctly attributed as soon as the
+    backend restarted with the fix.
+11. An audience user's Plan/Country are documented to default to "free"/"US" (the Java field
+    defaults, and what the seed data relies on) when unset, but the create/update validator only
+    applied that default when the field was entirely absent from the request, not when the
+    frontend form submitted it as an empty string - which is what happens whenever someone
+    leaves Plan/Country blank on the New/Edit user dialog, since those are plain controlled
+    inputs that always send a value. The user was silently stored with `plan`/`country` as `""`,
+    which then fails to match any "plan is free"/"country is X" segment or targeting rule, unlike
+    a real free-plan US user would. Fixed by treating a blank value the same as an absent one.
 
 Several other suspected issues were investigated and confirmed *not* to be bugs after deeper
 checking, which is recorded here for the same reason the fixes are: multivariate flag creation

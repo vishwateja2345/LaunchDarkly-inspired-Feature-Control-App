@@ -103,3 +103,93 @@ from those other sessions; local verification used alternate ports (e.g. Mongo o
 backend on `8010`/`8000` at different points) purely for testing, with `vite.config.js`,
 `hackerrank.yml`, and the `.env.example` files always reverted to the documented `3000`/`8000`/
 `27017` defaults before this commit.
+
+## Follow-up session: live bug hunt after user-reported issues
+
+After the initial build, the user reported the app "felt sloppy" and that "some features don't
+work," and asked for an aggressive, honest pass rather than re-asserting that things were fine.
+This section documents that pass truthfully, including bugs that existed in the version
+originally reported as fully verified above - the earlier verification exercised the API and
+the primary happy paths, but did not catch these.
+
+A persistent local instance (isolated Docker Mongo + backend + Vite dev server, deliberately
+left running instead of torn down after each check) was used to interact with the app like a
+real user across many sessions, rather than re-running the same automated checks. Every bug
+below was reproduced first, then fixed, then re-verified against the running app (not just
+re-read in source).
+
+1. **Targeting rule editor could silently submit an invalid rule.** Clicking "+ Add rule" left
+   `variationId: null` in state, but the outcome dropdown cosmetically displayed the first
+   variation as selected (a UI convenience for "never show a blank dropdown"), so the displayed
+   value and the real value diverged. Saving without touching the dropdown sent an invalid
+   payload and surfaced only an opaque "Request validation failed." toast. Fixed by defaulting
+   new rules to a real variation ID, and by making the outcome editor self-heal via an effect
+   whenever its `variationId` doesn't match a real variation - closing the whole bug class, not
+   just the one reported path.
+2. **Critical: restoring a flag's config from history completely bypassed the production
+   approval gate.** The codebase has one documented "single gateway"
+   (`ChangeRequestController`) that every production change is supposed to flow through so
+   exactly one code path enforces "production requires a second reviewer" - but the `/restore`
+   endpoint lived in a different controller and called the direct-apply path itself. Any
+   authenticated user could instantly roll back a production flag with zero review. Fixed by
+   moving `/restore` into that single gateway so it goes through the identical
+   propose-vs-apply-direct branching as every other change, and by threading a `changeAction`
+   through `ApprovalRequest` so an approved rollback is logged as "Rolled back," not a generic
+   "Configuration updated." Re-verified afterward in a completely fresh, independently seeded
+   clone (not the long-running dev instance) to confirm the fix is genuinely in the committed
+   code: a production restore now returns `applied: false` with a pending approval, and the
+   live config version is provably unchanged until a second account approves it.
+3. Closely related, found while fixing #2: toggling a flag in a non-production environment
+   computed a specific reason ("Turned on/off X in Y") but the direct-apply path silently
+   discarded it for a generic "X updated Y" history entry. Fixed alongside #2.
+4. **A flag could never be archived from the UI.** The flags-list row showed either the
+   per-environment toggle switch or the archive/restore button, controlled by a condition that
+   is true for every normal active flag - so the archive button only ever rendered for flags
+   already archived (as "Restore") or in a loading-error state. There was no other archive
+   entry point anywhere in the app. Fixed by showing the toggle and the archive/restore button
+   together.
+5. **Specific validation errors were silently dropped for any array-based field.** The backend
+   correctly validates things like duplicate variation values or malformed segment rules and
+   returns a precise per-item message keyed like `variations[1].value` or `rules[0].attribute`
+   - but the frontend looked these up with a plain key (`errors.variations`,
+   `fieldErrors.rules`), which never matches an indexed key, so the specific message was lost
+   and only the generic "Request validation failed." ever reached the user. Fixed with a shared
+   prefix-matching helper (`shared/fieldErrors.js`) used by both affected forms.
+6. A real CSS layout bug, found by inspecting computed styles rather than trusting a
+   screenshot: `.field-hint`/`.field-error` default to a negative top margin tuned for the
+   login page's floating-label inputs, but several dialogs (new segment, new environment,
+   approve/reject) used them inside `.field-group` without overriding that margin, so hint text
+   visibly overlapped the input above it by about 8px. Fixed at the CSS root
+   (`.field-group .field-hint`/`.field-error`) instead of patching each call site, so no future
+   usage of the same combination can reintroduce it.
+7. A UI polish issue prompted directly by the user pointing at a screenshot: the Production
+   environment pill stacked three separate "this is dangerous" signals (a color-coded dot, the
+   pill's own red-tinted active styling, and a warning-triangle icon) while every other
+   environment pill just got the plain color dot - the extra icon was redundant, not a
+   deliberate design choice, and removing it made Production consistent with every other pill.
+8. Consolidated a large amount of repeated one-off inline styling (card section headings, muted
+   helper/meta text, `ApprovalsPage`'s bespoke field styling that had drifted from the
+   `.field-group` pattern every other dialog uses) into shared CSS classes, specifically because
+   inconsistency between hand-built and delegated-agent-built pages is a plausible root cause of
+   "looks sloppy" complaints in multi-agent-built software.
+9. Backend error handling used `System.err.println`/an unlogged exception for unexpected errors
+   (`GlobalExceptionHandler`, `ApprovalScheduler`), losing the stack trace and bypassing normal
+   log configuration entirely - meaning a real production 500 would have been nearly
+   undebuggable. Switched both to SLF4J with the full exception logged.
+
+Several other suspected issues were investigated and confirmed *not* to be bugs after deeper
+checking, which is recorded here for the same reason the fixes are: multivariate flag creation
+(including mid-form row insertion/removal) preserves data correctly; a segment's "Preview
+match" count that initially looked wrong turned out to be correct once a dedicated top-level
+`AppUser.country` field (distinct from the free-form `attributes` map) was accounted for;
+deleting an environment cleans up correctly and the one orphaned history entry it leaves behind
+is correct, immutable audit-log behavior, not a defect; and the evaluator's "Custom attributes"
+input uses a small hand-rolled `key=value` parser with no `JSON.parse`/crash risk.
+
+**Re-verification before this transcript update:** a fresh `git clone` of the pushed repository
+(a separate checkout from the long-running dev instance used above) was seeded from scratch and
+booted on isolated ports/database, and the production-restore approval gate (item 2) was
+re-confirmed end to end against that independent instance. `bun run build` and
+`./gradlew build -x test` both pass. `skills/rollout-bucketing-check` was re-run against the
+live instance after all of the above changes and still passes (stickiness held for all repeat
+users; observed 24%/76% against a configured 25%/75% split, within tolerance).

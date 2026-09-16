@@ -10,6 +10,7 @@ import { MaterialIcon } from "../../shared/components/MaterialIcon.jsx";
 import { Badge } from "../../shared/components/Badge.jsx";
 import { EmptyState } from "../../shared/components/EmptyState.jsx";
 import { Spinner } from "../../shared/components/Spinner.jsx";
+import { fieldErrorsFrom as extractFieldErrors, firstErrorForPrefix } from "../../shared/fieldErrors.js";
 
 const SEGMENT_OPERATOR_OPTIONS = [
     { value: "equals", label: "is" },
@@ -688,9 +689,9 @@ function SegmentFormDialog({ mode, projectId, segment, onClose, onSaved }) {
                             Add rule
                         </button>
                     </div>
-                    {fieldErrors.rules && (
+                    {firstErrorForPrefix(fieldErrors, "rules") && (
                         <div className="field-error" role="alert" style={{ margin: "6px 0 0" }}>
-                            {fieldErrors.rules}
+                            {firstErrorForPrefix(fieldErrors, "rules")}
                         </div>
                     )}
                 </div>
@@ -1150,10 +1151,4 @@ function coerceAttributeValue(rawValue) {
     if (value.toLowerCase() === "false") return false;
     if (/^-?\d+(\.\d+)?$/.test(value)) return Number(value);
     return value;
-}
-
-function extractFieldErrors(error) {
-    return error?.details?.fieldErrors && typeof error.details.fieldErrors === "object"
-        ? error.details.fieldErrors
-        : {};
 }

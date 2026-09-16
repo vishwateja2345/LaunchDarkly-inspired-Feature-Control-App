@@ -2,6 +2,7 @@ import { useId, useState } from "react";
 import { createPortal } from "react-dom";
 import { Modal } from "../../shared/components/Modal.jsx";
 import { MaterialIcon } from "../../shared/components/MaterialIcon.jsx";
+import { fieldErrorsFrom, firstErrorForPrefix } from "../../shared/fieldErrors.js";
 import { flagsApi } from "./flags.api.js";
 
 function emptyVariation() {
@@ -59,7 +60,7 @@ export function FlagFormDialog({ onClose, onCreated, projectId }) {
             onCreated();
         } catch (caught) {
             setFormError(caught.message || "Unable to create this flag.");
-            setErrors(caught.details?.fieldErrors || {});
+            setErrors(fieldErrorsFrom(caught));
         } finally {
             setBusy(false);
         }
@@ -164,7 +165,9 @@ export function FlagFormDialog({ onClose, onCreated, projectId }) {
                         >
                             + Add variation
                         </button>
-                        {errors.variations && <span className="field-error">{errors.variations[0]}</span>}
+                        {firstErrorForPrefix(errors, "variations") && (
+                            <span className="field-error">{firstErrorForPrefix(errors, "variations")}</span>
+                        )}
                     </div>
                 )}
 
